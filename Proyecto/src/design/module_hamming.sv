@@ -5,8 +5,7 @@ module module_hamming (
     input logic [3:0] Numero_binario,
 
     output logic [6:0] hamming
-
-    
+ 
 );
 
 logic P1, P2, P3;

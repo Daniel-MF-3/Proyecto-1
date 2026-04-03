@@ -12,22 +12,22 @@ module error_gen_tb;
         $display("Caso 1: No error");
         $display("i: %b, c: %b", i, c);
 
-        // Caso 2: Error in bit 0
+        // Caso 2: Error en bit 0
         sw_error = 4'b0001;
         #10;
-        $display("Caso 2: Error in bit 0");
+        $display("Caso 2: Error en bit 0");
         $display("i: %b, c: %b", i, c);
 
-        // Caso 3: Error in bit 1
+        // Caso 3: Error en bit 1
         sw_error = 3'b010;
         #10;
-        $display("Caso 3: Error in bit 1");
+        $display("Caso 3: Error en bit 1");
         $display("i: %b, c: %b", i, c);
 
-        // Caso 4: Error in bit 2
+        // Caso 4: Error en bit 2
         sw_error = 3'b100;
         #10;
-        $display("Caso 4: Error in bit 2");
+        $display("Caso 4: Error en bit 2");
         $display("i: %b, c: %b", i, c);
         // Finish simulation
         $finish;
