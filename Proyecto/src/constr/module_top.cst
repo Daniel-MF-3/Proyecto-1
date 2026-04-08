@@ -1,0 +1,44 @@
+IO_LOC  "Numero_binario[3]" 41;
+IO_PORT "Numero_binario[3]" IO_TYPE=LVCMOS33 PULL_MODE=DOWN;
+
+IO_LOC  "Numero_binario[2]" 42;
+IO_PORT "Numero_binario[2]" IO_TYPE=LVCMOS33 PULL_MODE=DOWN;
+
+IO_LOC  "Numero_binario[1]" 51;
+IO_PORT "Numero_binario[1]" IO_TYPE=LVCMOS33 PULL_MODE=DOWN;
+
+IO_LOC  "Numero_binario[0]" 53;
+IO_PORT "Numero_binario[0]" IO_TYPE=LVCMOS33 PULL_MODE=DOWN;
+
+IO_LOC  "idx[2]" 26;
+IO_PORT "idx[2]" IO_TYPE=LVCMOS33 PULL_MODE=DOWN;
+
+IO_LOC  "idx[1]" 27;
+IO_PORT "idx[1]" IO_TYPE=LVCMOS33 PULL_MODE=DOWN;
+
+IO_LOC  "idx[0]" 28;
+IO_PORT "idx[0]" IO_TYPE=LVCMOS33 PULL_MODE=DOWN;
+
+IO_LOC  "seg_o[6]" 73;
+IO_PORT "seg_o[6]" IO_TYPE=LVCMOS33;
+
+IO_LOC  "seg_o[5]" 74;
+IO_PORT "seg_o[5]" IO_TYPE=LVCMOS33;
+
+IO_LOC  "seg_o[4]" 72;
+IO_PORT "seg_o[4]" IO_TYPE=LVCMOS33;
+
+IO_LOC  "seg_o[3]" 71;
+IO_PORT "seg_o[3]" IO_TYPE=LVCMOS33;
+
+IO_LOC  "seg_o[2]" 70;
+IO_PORT "seg_o[2]" IO_TYPE=LVCMOS33;
+
+IO_LOC  "seg_o[1]" 76;
+IO_PORT "seg_o[1]" IO_TYPE=LVCMOS33;
+
+IO_LOC  "seg_o[0]" 75;
+IO_PORT "seg_o[0]" IO_TYPE=LVCMOS33;
+
+IO_LOC  "an_o" 49;
+IO_PORT "an_o" IO_TYPE=LVCMOS33;
