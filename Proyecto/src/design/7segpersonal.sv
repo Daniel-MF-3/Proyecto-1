@@ -13,43 +13,43 @@ module sevenseg_display_single (
     assign D = numero_binario[0];
 
     // Lógica para cada segmento (a-g)
-    assign segments[0] = (~A & B & D) |               // segmento A
+    assign seg_o[0] = (~A & B & D) |               // segmento A
                     (~A & C) |
                     (A & ~B & ~C) |
                     (A & ~D) |
                     (~B & ~D) |
                     (B & C);  
 
-assign segments[1] = (~B & ~D) |     // segmento B
+assign seg_o[1] = (~B & ~D) |     // segmento B
                     (~B  & ~C) |
                     (~A & ~C & ~D) |
                     (A & ~C & D) |
                     (~A & C & D); 
 
-assign segments[2] = (~B & ~C) |     // segmento C
+assign seg_o[2] = (~B & ~C) |     // segmento C
                     (~C & D) |
                     (~A & B) |
                     (A & ~B) |
                     (~B & D);        
 
-assign segments[3] = (~B & ~C & ~D) |     // segmento D
+assign seg_o[3] = (~B & ~C & ~D) |     // segmento D
                     (A & B & ~D) |
                     (B & ~C & D) |
                     (~B & C & D) |
                     (~A & C & ~D);
 
-assign segments[4] = (~B & ~D) |          // segmento E
+assign seg_o[4] = (~B & ~D) |          // segmento E
                     (A & B) |
                     (A & C) |
                     (C & ~D);
 
-assign segments[5] = (~C & ~D) |         // segmento F
+assign seg_o[5] = (~C & ~D) |         // segmento F
                     (~A & B & ~C) |
                     (A & ~B ) |
                     (B & ~D) |
                     (A & C); 
 
-assign segments[6] = (~B & C) |         // segmento G
+assign seg_o[6] = (~B & C) |         // segmento G
                     (C & ~D) |
                     (A & ~B) |
                     (A & D)|
