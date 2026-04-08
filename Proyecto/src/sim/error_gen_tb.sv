@@ -11,15 +11,15 @@ module error_gen_tb;
     error_gen dut (.hamming_in(hamming_in),.idx(idx),.i(i),.c(c));
 
     initial begin
-        // Base input (example Hamming word)
+        //Caso de prueba 
         hamming_in = 7'b1010110;
 
-        // Case 0: No error (optional convention)
+        // No haay error
         idx = 3'd0;
         #10;
         $display("idx=%0d | in=%b | i=%b c=%b", idx, hamming_in, i, c);
 
-        // Inject error in every possible bit
+        // Iterar por los bits para generar errores
         for (int k = 1; k < 7; k++) begin //
             idx = k;
             #10;

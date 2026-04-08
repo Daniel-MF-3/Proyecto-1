@@ -8,33 +8,25 @@ module top_hamming ( /*Las entradas y salidas que se instancian el parentesis so
     output logic [3:0] i,
     output logic [2:0] c
 );
-
     // Señales internas
     logic [6:0] hamming_out;
     
 
-    // =========================
     // Instancia: Generador Hamming
-    // =========================
+ 
     module_hamming u_hamming (
         .Numero_binario(Numero_binario),
         .hamming(hamming_out)
     );
 
-    // =========================
     // Instancia: Generador de error
-    // =========================
     error_gen u_error (
     .hamming_in(hamming_out),
     .idx(idx),
     .i(i),
     .c(c)
 );
-
-    // =========================
     // Instancia: Display 7 segmentos
-    // (mostrando los datos reconstruidos "i")
-    // =========================
     sevenseg_display_single u_display (
         .numero_binario(i),
         .seg_o(seg_o),
