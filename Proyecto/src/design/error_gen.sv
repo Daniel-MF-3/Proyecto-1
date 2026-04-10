@@ -8,9 +8,9 @@ module error_gen (
     logic [6:0] resultado_con_error;
 
     // Flip selected bit
-    assign resultado_con_error = (idx == 0) ? 
+    assign resultado_con_error = (idx == 3'd0) ? 
                              hamming_in :
-                             (hamming_in ^ (7'b1 << (idx-1)));
+                             (hamming_in ^ (7'b1 << (idx - 1)));
 
     //Extraccion y entrega segun formato solicitado
     assign i[3] = resultado_con_error[6];
