@@ -6,7 +6,7 @@ module top_tb;
     como si fueran un nodo, por eso se conectan en el DUT. 
     */
     logic [3:0] sw;                         
-    logic Sa, Sb, Sc, Sd, Se, Sf, Sg;
+    logic seg_o[6:0];
     logic [6:0] out;
 
     // DUT (Device Under Test)
@@ -20,7 +20,7 @@ module top_tb;
     */
     top dut (
         .sw(sw),
-        .segments({Sg,Sf,Se,Sd,Sc,Sb,Sa})
+        .segments(seg_o)
     );
 
     // Función que devuelve patrón esperado. Se utilizara para comparar 'segments' contra 'expected'
@@ -54,7 +54,7 @@ module top_tb;
         for (int i = 0; i < 16; i++) begin
             sw = i;
             #1;
-            out = {Sa,Sb,Sc,Sd,Se,Sf,Sg};       
+            out = {seg_o[6],seg_o[5],seg_o[4],seg_o[3],seg_o[2],seg_o[1],seg_o[0]};       
 
             if (out != expected(i)) begin
                 $display("ERROR at %0d -> got %b expected %b",
