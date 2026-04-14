@@ -19,7 +19,7 @@ module top_tb;
     Observe que se prefiere usar los S# porque es mas facil y corto que escribir segments[#]...
     */
     top dut (
-        .sw(sw),
+        .sw(numero_binario),
         .segments(seg_o)
     );
 
