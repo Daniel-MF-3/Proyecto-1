@@ -28,7 +28,7 @@ module top_hamming ( /*Las entradas y salidas que se instancian el parentesis so
 );
     // Instancia: Display 7 segmentos
     sevenseg_display_single u_display (
-        .numero_binario(i),
+        .numero_binario(Numero_binario),
         .seg_o(seg_o),
         .an_o(an_o)
     );
