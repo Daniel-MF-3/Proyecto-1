@@ -1,4 +1,4 @@
-# Codificador hamming, encargados: Alessandro Castillo Gutierrez, Jose Daniel Marchena
+# Codificador hamming fase transmisor, encargados: Alessandro Castillo Gutierrez, Jose Daniel Marchena
 
 ## 1. Abreviaturas y definiciones
 - **FPGA**: Field Programmable Gate Arrays
@@ -58,6 +58,7 @@ assign hamming[6]=D4;
 endmodule
 ```
 El modulo ejecuta las operaciones XOR antes mencionadas y las almacena en vector hamming
+
 #### Testbench
 ```SystemVerilog
 `timescale 1ns/1ps
@@ -159,8 +160,7 @@ assign seg_o[6] = (~B & C) |         // segmento G
 
 endmodule
 ```
-El modulo ejecuta las operaciones XOR antes mencionadas y las almacena en vector hamming
-
+*Aclarar que se usa un modulo ya hecho*
 
 #### Testbench
 ```SystemVerilog
@@ -177,7 +177,7 @@ module top_tb;
 
     // DUT (Device Under Test)
     top dut (
-        .sw(sw),
+        .sw(numero_binario),
         .segments(seg_o)
     );
 
@@ -244,11 +244,14 @@ Entradas y salidas
 
 module error_gen (
     input  logic [6:0] hamming_in,
-    input  logic [2:0] idx, /*Idx hay que cambiarlo por el sw o como sea que se llame las entradas que indican donde poner el erorr idx=0 no error, idx=1 error en bit 0, idx=2 error en bit 1, ..., idx=6 error en bit 6 */
+    input  logic [2:0] idx, 
     output logic [3:0] i,
     output logic [2:0] c
 );
+```
 
+
+```SystemVerilog
     logic [6:0] resultado_con_error;
 
     // Flip selected bit
@@ -267,7 +270,6 @@ module error_gen (
     assign c[0] = resultado_con_error[0];
 
 endmodule
-
 ```
 *Explicacion*
 
@@ -309,43 +311,50 @@ module error_gen_tb;
 endmodule
 ```
 *Explicacion*
+
+Para Marchena
 *Meter los mapas y simplificacion a pesar de que no se uso*
 
 ### 3. Modulo Superior
-Entradas y salidas
+Entradas y Salidas
 ```SystemVerilog
-module error_gen (
-    input  logic [6:0] hamming_in,
-    input  logic [2:0] idx, 
+module top_hamming ( 
+
+    input  logic [3:0] Numero_binario,
+    input  logic [2:0] idx,
+
+    output logic [6:0] seg_o,
+    output logic an_o,
     output logic [3:0] i,
     output logic [2:0] c
 );
-
-    logic [6:0] resultado_con_error;
-
+    // Señales internas
+    logic [6:0] hamming_out;
+    
 ```
-*Explicacion*
-
-
+*Explicar*
 ```SystemVerilog
-    // Flip selected bit
-    assign resultado_con_error = (idx == 3'd0) ? 
-                             hamming_in :
-                             (hamming_in ^ (7'b1 << (idx - 1)));
+    
+    module_hamming u_hamming (
+        .Numero_binario(Numero_binario),
+        .hamming(hamming_out)
+    );
 
-    //Extraccion y entrega segun formato solicitado
-    assign i[3] = resultado_con_error[6];
-    assign i[2] = resultado_con_error[5];
-    assign i[1] = resultado_con_error[4];
-    assign i[0] = resultado_con_error[2];
-
-    assign c[2] = resultado_con_error[3];
-    assign c[1] = resultado_con_error[1];
-    assign c[0] = resultado_con_error[0];
+    error_gen u_error (
+    .hamming_in(hamming_out),
+    .idx(idx),
+    .i(i),
+    .c(c)
+);
+    sevenseg_display_single u_display (
+        .numero_binario(Numero_binario),
+        .seg_o(seg_o),
+        .an_o(an_o)
+    );
 
 endmodule
-
 ```
+
 *Explicacion*
 
 #### Testbench
@@ -396,7 +405,6 @@ endmodule
 
 ## 4. Consumo de recursos
 
-## top_hamming
 
 - **Number of wires:** 180  
 - **Number of wire bits:** 274  
@@ -425,7 +433,9 @@ endmodule
 | VCC        | 1     |
 
 ## 5. Problemas encontrados durante el proyecto
-
+Manejo de la insercion del error mediante switches porque al ser en posicion y en base 2^n hay que hacer un ajuste por ser por dar un ejemplo 2^0=1 pero la posicion 1 del hamming no es LSB , son 7 bits, pero van del 0 al 6 indexados, entonces eso se ajusta.
+Ajustes en el banco de pruebas que se hicieron para evidenciar el cambio de error en consola para confirmar sospechas de mal accionar en el waveform.
+Para el top el problema mas relevante es cuidar las señales instanciadas en el parentesis sean las adecuadas pues son donde se declaran señales que interactuan con el entorno      
 
 
 ## Apendices:

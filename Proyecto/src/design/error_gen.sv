@@ -24,5 +24,15 @@ module error_gen (
 
 endmodule
 
+/*? es un if else compacto: con la forma: condition ? value_if_true : value_if_false; lo que hace es verificar 
+la condición (en este caso, si idx es igual a 0) y si es verdadera, asigna hamming_in a 
+resultado_con_error. Si la condición es falsa (es decir, si idx no es 0), entonces se realiza una operación XOR entre hamming_in 
+y un valor que tiene un solo bit encendido en la posición correspondiente a idx-1. Esto efectivamente "flips" el 
+bit en esa posición, introduciendo un error en el código Hamming.
 
+if (idx == 0)
+    resultado_con_error = hamming_in;
+else
+    resultado_con_error = hamming_in with one bit flipped at position (idx - 1);
+*/
 
