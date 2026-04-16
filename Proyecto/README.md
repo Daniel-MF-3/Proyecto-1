@@ -28,8 +28,8 @@ El modulo recibe la entrada desde los conmutadores del dato principal que se alm
 Numero_binario[3]=D4(MSB)
 Numero_binario[2]=D3
 Numero_binario[1]=D2
-Numero_binario[3]=D1
- Y ese numero se procesa para codificacion hamming con XOR y paridades, y este resultado sale a traves de hamming[6:0]
+Numero_binario[0]=D1
+y ese numero se procesa para codificacion hamming con XOR y paridades psra finalmmente este resultado salir a traves de hamming[6:0]
 ```SystemVerilog
 // Denominando que variables se van a utilizar
 logic P1, P2, P3;
@@ -87,11 +87,7 @@ $finish;
 end
 endmodule
 ```
-
-Explicar que hace ese modulo 
-
-
-#### 1.1 Criterios de
+El testbench que responde al diseño del modulo hamming lo que corresponde es generar vectores equivalentes a los que existen el diseño y reciben estimulos, en el caso del testbench son estimulos internos a traves de llamar la funcion module_hamming bajo device under test o DUT para entregarle esos estimulos virtuales y un for que tome esos estimulos de 0 hasta 16 resporte los resultados de manera visual en consola a traves de $diplay
 
 ### 2. 7segmentos 
 Entradas y salidas
@@ -103,6 +99,13 @@ module sevenseg_display_single (
 );
 
     wire A, B, C, D;
+```
+En el caso del modulo de 7segmentos se recibe el numero binario del estimulos externos que se almacenan en su vector correspondiente [3:0] numero binario.
+Estos se codifican para responder a patrones que les seran utilizados para encender un led de 7 segmentos y salen al exterior a traves de seg_o colocado en pines del FPGA
+En el caso del An_o es una variable requesito como consecuencia de las capacidades de la FPGA a la hora de entregar corriente.
+El objetivo de la misma es enviar la señal en alto 3.3v que polaricen el NPN (2N3906) para permitir el paso de corriente de forma estable. El a_o estimula la base, el emisor se conecta a tierra, dado que el NPN es excelente para para atraer a GND y el colector estimula el 7 segemtnos anodo comun que como su nombre indica enciende con 0 en la patilla comun y cada segmento por tanto se activa con una señal en alto o de 1.
+
+```SystemVerilog
 
     // Mapear bits del número a variables para claridad
     assign A = numero_binario[3];
@@ -160,7 +163,8 @@ assign seg_o[6] = (~B & C) |         // segmento G
 
 endmodule
 ```
-*Aclarar que se usa un modulo ya hecho*
+
+*En esta parte del diseño no se profundiza ya que fue un diseño tomado del tutorial previo dentro de la carpeta open_source_fpga_environment
 
 #### Testbench
 ```SystemVerilog
@@ -234,8 +238,9 @@ module top_tb;
 
 endmodule
 ```
+El testbench de igual forma fue tomado del tutorial, en concreto de la carpeta open_source_fpga_environment
 
-Explicar que hace ese modulo 
+## 2.1 Ecuaciones y mapas K para el uso en 7 segmentos 
 
 
 ### 3. Generacion del error 
@@ -249,7 +254,7 @@ module error_gen (
     output logic [2:0] c
 );
 ```
-
+Este modulo recibe la palabra hamming previamente creada por modulos anteriores bajo el vector [6:0] hamming_in, asi tambien recibe [2:0] idx que es un vector con el proposito de almacenar entradas externas al fpga a traves de interrumptores y que segun sean alto o bajo revelen un numero base binaria que se usara para invertir un bit en( introducir un error). 
 
 ```SystemVerilog
     logic [6:0] resultado_con_error;
@@ -271,7 +276,16 @@ module error_gen (
 
 endmodule
 ```
-*Explicacion*
+Resultado con error es un vector intermedio con el papel de tomar las salidas que resulten de de aplicar un condicional  de esta forma:
+```
+if (idx == 0) //
+    resultado_con_error = hamming_in;
+else
+    resultado_con_error = hamming se entrega con un bit al reves en la posicion (idx - 1);
+```
+Esto quiere deicr que si Idx es 000 el numero hamming que ha entrado se pasa a asignar a los vectores [2:0]c y [3:0]i sin cambios, por el contrario si idx es distinto se corrige la posicion que indique el numero binario de idx-1, esto porque con 3 bits se puede representar numeros del 0 al 7 pero las posiciones fisican existen de la 0 a la 6
+[3:0] I almacena los datos inegrados a los que en el todo el transcurso de les ha mantenido ratro, [2:0]c almacena los bits de paridad.
+En ambos casos son salidas, salidas que como se vera en el modulo top son declaradas en donde corresponden para que interactuen con el exterior, es decir sean entregadas a los pines de la FPGA.
 
 #### Testbench
 ```SystemVerilog
@@ -288,17 +302,17 @@ module error_gen_tb;
     error_gen dut (.hamming_in(hamming_in),.idx(idx),.i(i),.c(c));
 
     initial begin
-        // Base input (example Hamming word)
+        // Hamming estimulo
         hamming_in = 7'b1110011; 
         // hamming = [D4 D3 D2 P3 D1 P2 P1]
-        // data bits (D4..D1): 1,1,1,0
-        // parity bits (P3,P2,P1): 0,1,1
-        // Case 0: No error (optional convention)
+        // datos (D4..D1): 1,1,1,0
+        // bits de paridad  (P3,P2,P1): 0,1,1
+        // Case 0: No  hay error
         idx = 3'd0;
         #10;
         $display("idx=%0d | in=%b | i=%b c=%b", idx, hamming_in, i, c);
 
-        // Inject error in every possible bit
+        // Estimular el error para cualquiera de las 6 posiciones 
         for (int k = 1; k <= 7; k++) begin //
             idx = k;
             #10;
@@ -310,10 +324,7 @@ module error_gen_tb;
 
 endmodule
 ```
-*Explicacion*
-
-Para Marchena
-*Meter los mapas y simplificacion a pesar de que no se uso*
+El testbench del estimulo de error, al igual que el modulo hamming realiza un estimulo para cada posible posicion de error y despliega [3:0]i asi como [2:0]c en pantalla para poder como usuario percibir que el error segun la configuracion posicional previamente conocida de hamming saber que el error se almacena en el vector de salida adecuado  
 
 ### 3. Modulo Superior
 Entradas y Salidas
@@ -332,7 +343,9 @@ module top_hamming (
     logic [6:0] hamming_out;
     
 ```
-*Explicar*
+Este modulo superior su papel es establecer la señales que interactuan con el exterior al declararlas en sus parametros, sean estas de salida o de entrada. y declarar la señal interna de hamming como medio transmisor de un modulo a otro
+
+
 ```SystemVerilog
     
     module_hamming u_hamming (
@@ -355,7 +368,7 @@ module top_hamming (
 endmodule
 ```
 
-*Explicacion*
+El desarrolo del modulo no es mas que declaraciones llamado de funciones a traves de la declaracion explicita de puertos por comodidad y prevencion de errores 
 
 #### Testbench
 ```SystemVerilog
@@ -377,12 +390,12 @@ module error_gen_tb;
         // hamming = [D4 D3 D2 P3 D1 P2 P1]
         // data bits (D4..D1): 1,1,1,0
         // parity bits (P3,P2,P1): 0,1,1
-        // Case 0: No error (optional convention)
+        // Case 0: No error 
         idx = 3'd0;
         #10;
         $display("idx=%0d | in=%b | i=%b c=%b", idx, hamming_in, i, c);
 
-        // Inject error in every possible bit
+        // Estimular el error para cualquiera de las 6 posiciones 
         for (int k = 1; k <= 7; k++) begin //
             idx = k;
             #10;
@@ -394,12 +407,7 @@ module error_gen_tb;
 
 endmodule
 ```
-*Explicacion*
-
-
-
-
-
+El caso testbench del modulo top se podria decir que es una replica del generador de error pero con la diferencia de que sirve para comprobar que las instancias son correctas 
 
 
 
@@ -434,8 +442,11 @@ endmodule
 
 ## 5. Problemas encontrados durante el proyecto
 Manejo de la insercion del error mediante switches porque al ser en posicion y en base 2^n hay que hacer un ajuste por ser por dar un ejemplo 2^0=1 pero la posicion 1 del hamming no es LSB , son 7 bits, pero van del 0 al 6 indexados, entonces eso se ajusta.
+
 Ajustes en el banco de pruebas que se hicieron para evidenciar el cambio de error en consola para confirmar sospechas de mal accionar en el waveform.
 Para el top el problema mas relevante es cuidar las señales instanciadas en el parentesis sean las adecuadas pues son donde se declaran señales que interactuan con el entorno      
+
+### 6. Oscilador de anillo
 
 
 ## Apendices:
