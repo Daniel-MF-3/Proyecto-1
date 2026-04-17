@@ -250,8 +250,13 @@ endmodule
 ```
 El testbench de igual forma fue tomado del tutorial, en concreto de la carpeta open_source_fpga_environment
 
-## 2.1 Ecuaciones y mapas K para el uso en 7 segmentos 
+## 2.1 Ecuacio´n y mapa K para el uso en 7 segmentos 
 
+Aquí hay un ejemplo uno de los mapas de Karnaugh que se hicieron para las ecuaciones del 7 segmentos del segmento e:
+
+<img width="467" height="386" alt="Captura de pantalla 2026-04-17 115044" src="https://github.com/user-attachments/assets/d29f3b1e-3eaa-4ee8-8aee-3350bd5ba307" />
+
+Su ecuación: $e = B'D' + CD' + AC + AB$
 
 ### 3. Generacion del error 
 Entradas y salidas
