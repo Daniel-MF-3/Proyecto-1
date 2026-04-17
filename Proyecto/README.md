@@ -536,12 +536,13 @@ Durante la simulación, se observa que para cada valor de idx, el sistema logra 
 El diseño implementado presenta un uso total de 193 celdas dentro de la FPGA, con una distribución claramente orientada a lógica combinacional. Se observa un consumo aproximado de 93 LUTs (considerando LUT1 a LUT4), lo que indica que la mayor parte de la funcionalidad se resuelve mediante lógica simple distribuida. Adicionalmente, hay un uso significativo de multiplexores internos, con 72 instancias de tipo MUX2_LUTx, no se reporta el uso de memorias ni de flip-flops (FFs), por lo que se concluye que el sistema es completamente combinacional.
 
 ## 5. Problemas encontrados durante el proyecto
-Manejo de la insercion del error mediante switches porque al ser en posicion y en base 2^n hay que hacer un ajuste por ser por dar un ejemplo 2^0=1 pero la posicion 1 del hamming no es LSB , son 7 bits, pero van del 0 al 6 indexados, entonces eso se ajusta.
+Manejo de la insercion del error mediante switches porque al ser en posicion y en base 2^n hay que hacer un ajuste por ser por dar un ejemplo 2^0=1 pero la posicion 1 del hamming no es LSB , son 7 bits, pero van del 0 al 6 indexados, entonces eso se ajusta. La solucion es basicamente un condicional o a efectos practicos un MUX para saber si pasa sin alterar o altera 
 
 Ajustes en el banco de pruebas que se hicieron para evidenciar el cambio de error en consola para confirmar sospechas de mal accionar en el waveform.
-Para el top el problema mas relevante es cuidar las señales instanciadas en el parentesis sean las adecuadas pues son donde se declaran señales que interactuan con el entorno.
+Para el top el problema mas relevante es cuidar las señales instanciadas en el parentesis sean las adecuadas pues son donde se declaran señales que interactuan con el entorno. No se presentaron mayores inconvenientes 
 
 Con repecto al anillo, se tuvo las dificulates de obtener los resultados en el osciloscopio al tener ondas con cucho ruidos y valores no cercanos. La solución fue utilizar un logic analyzer para obtener mejores resultados y ondas con menos distorciones.
+
 
 ## 6. Oscilador de anillo
 
