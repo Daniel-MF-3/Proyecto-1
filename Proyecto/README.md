@@ -258,6 +258,9 @@ Aquí hay un ejemplo uno de los mapas de Karnaugh que se hicieron para las ecuac
 
 Su ecuación: $e = B'D' + CD' + AC + AB$
 
+![Circuito resultante de la simplificacion del segmento e](image.png)
+Circuito resultante de la simplificacion del segmento e
+
 ### 3. Generacion del error 
 Entradas y salidas
 ```SystemVerilog
@@ -389,40 +392,115 @@ El desarrolo del modulo no es mas que declaraciones llamado de funciones a trave
 ```SystemVerilog
 `timescale 1ns/1ps
 
-module error_gen_tb;
+module tb_top_hamming;
 
-    logic [6:0] hamming_in;
+    // Señales de prueba
+    logic [3:0] Numero_binario;
     logic [2:0] idx;
     logic [3:0] i;
     logic [2:0] c;
+    logic [6:0] seg_o;
+    logic an_o;
 
-    // DUT
-    error_gen dut (.hamming_in(hamming_in),.idx(idx),.i(i),.c(c));
-
+    // Instancia del DUT (Device Under Test)
+    top_hamming dut (
+        .Numero_binario(Numero_binario),
+        .idx(idx),
+        .seg_o(seg_o),
+        .an_o(an_o),
+        .i(i),
+        .c(c)
+    );
     initial begin
-        // Base input (example Hamming word)
-        hamming_in = 7'b1110011; 
-        // hamming = [D4 D3 D2 P3 D1 P2 P1]
-        // data bits (D4..D1): 1,1,1,0
-        // parity bits (P3,P2,P1): 0,1,1
-        // Case 0: No error 
+        $dumpfile("top_hamming_tb.vcd"); 
+        $dumpvars(0, tb_top_hamming);
+    end
+    // Proceso de estímulos
+    initial begin
+        // Inicialización
+        Numero_binario = 4'b0000;
         idx = 3'd0;
+
+        // Espera inicial
         #10;
-        $display("idx=%0d | in=%b | i=%b c=%b", idx, hamming_in, i, c);
+        $display("t=%0t | Num=%b | idx=%d | i=%b | c=%b", $time, Numero_binario, idx, i, c);
+        // =========================
+        // Prueba sin error
+        // =========================
+        Numero_binario = 4'b0101; // 5
+        idx = 3'd0;               // sin error
+        #20;
+        $display("t=%0t | Num=%b | idx=%d | i=%b | c=%b", $time, Numero_binario, idx, i, c);
 
-        // Estimular el error para cualquiera de las 6 posiciones 
-        for (int k = 1; k <= 7; k++) begin //
-            idx = k;
-            #10;
-            $display("idx=%0d | in=%b | i=%b c=%b", idx, hamming_in, i, c);
-        end
+        // =========================
+        // Prueba con errores en distintos bits
+        // =========================
+        idx = 3'd1; // error en bit 0
+        #20;
+        $display("t=%0t | Num=%b | idx=%d | i=%b | c=%b", $time, Numero_binario, idx, i, c);
 
+
+        idx = 3'd2; // error en bit 1
+        #20;
+        $display("t=%0t | Num=%b | idx=%d | i=%b | c=%b", $time, Numero_binario, idx, i, c);
+
+
+        idx = 3'd3; // error en bit 2
+        #20;
+        $display("t=%0t | Num=%b | idx=%d | i=%b | c=%b", $time, Numero_binario, idx, i, c);
+
+
+        idx = 3'd4; // error en bit 3
+        #20;
+        $display("t=%0t | Num=%b | idx=%d | i=%b | c=%b", $time, Numero_binario, idx, i, c);
+
+
+        idx = 3'd5; // error en bit 4
+        #20;
+        $display("t=%0t | Num=%b | idx=%d | i=%b | c=%b", $time, Numero_binario, idx, i, c);
+
+
+        idx = 3'd6; // error en bit 5
+        #20;
+        $display("t=%0t | Num=%b | idx=%d | i=%b | c=%b", $time, Numero_binario, idx, i, c);
+
+
+        idx = 3'd7; // error en bit 6
+        #20;
+        $display("t=%0t | Num=%b | idx=%d | i=%b | c=%b", $time, Numero_binario, idx, i, c);
+
+
+        // =========================
+        // Cambiar dato de entrada
+        // =========================
+        Numero_binario = 4'b1010; // 10
+        idx = 3'd0;
+        #20;
+        $display("t=%0t | Num=%b | idx=%d | i=%b | c=%b", $time, Numero_binario, idx, i, c);
+
+
+        idx = 3'd3;
+        #20;
+        $display("t=%0t | Num=%b | idx=%d | i=%b | c=%b", $time, Numero_binario, idx, i, c);
+        
+        // =========================
+        // Finalizar simulación
+        // =========================
         $finish;
     end
 
 endmodule
 ```
-El caso testbench del modulo top se podria decir que es una replica del generador de error pero con la diferencia de que sirve para comprobar que las instancias son correctas 
+
+
+## 3.1 Ejemplo y análisis de una simulación funcional del sistema completo, desde el estímulo de entrada hasta el manejo de los 7 segmentos.
+Inicialmente, el sistema se evalúa en condición sin error (idx = 0), donde el valor de entrada se transmite sin alteraciones. En este caso, las salidas intermedias i (datos procesados) y c (bits de paridad) corresponden directamente a la codificación Hamming generada a partir del número de entrada. Esta condición permite verificar que el sistema produce correctamente los bits de redundancia y que no se activa ningún mecanismo de corrección.
+ 
+ Posteriormente, se introducen errores controlados mediante la variación del valor de idx. Cada valor distinto de cero representa la inversión de un bit específico dentro de la palabra codificada. El sistema responde a estos cambios recalculando los bits de paridad y generando un síndrome que permite identificar la posición del error. A partir de este síndrome, el sistema corrige el bit afectado, lo cual se refleja en la salida i, que mantiene consistencia con el dato original a pesar de la perturbación introducida.
+
+Durante la simulación, se observa que para cada valor de idx, el sistema logra detectar y corregir correctamente errores de un solo bit, lo cual valida el funcionamiento del esquema de código Hamming implementado. Los valores de c evidencian cambios en función del error introducido, confirmando que los bits de paridad responden a la alteración de la palabra.
+
+
 
 
 
@@ -651,6 +729,3 @@ Resultados simalares a los teóricos y una onda cuadrada. Sin embargo un oscilad
 
 
 
-## Apendices:
-### Apendice 1:
-texto, imágen, etc
