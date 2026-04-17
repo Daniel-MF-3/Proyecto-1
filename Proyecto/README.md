@@ -533,6 +533,8 @@ Durante la simulación, se observa que para cada valor de idx, el sistema logra 
 | OBUF       | 15    |
 | VCC        | 1     |
 
+El diseño implementado presenta un uso total de 193 celdas dentro de la FPGA, con una distribución claramente orientada a lógica combinacional. Se observa un consumo aproximado de 93 LUTs (considerando LUT1 a LUT4), lo que indica que la mayor parte de la funcionalidad se resuelve mediante lógica simple distribuida. Adicionalmente, hay un uso significativo de multiplexores internos, con 72 instancias de tipo MUX2_LUTx, no se reporta el uso de memorias ni de flip-flops (FFs), por lo que se concluye que el sistema es completamente combinacional.
+
 ## 5. Problemas encontrados durante el proyecto
 Manejo de la insercion del error mediante switches porque al ser en posicion y en base 2^n hay que hacer un ajuste por ser por dar un ejemplo 2^0=1 pero la posicion 1 del hamming no es LSB , son 7 bits, pero van del 0 al 6 indexados, entonces eso se ajusta.
 
